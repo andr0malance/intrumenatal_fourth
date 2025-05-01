@@ -1,0 +1,82 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+
+namespace NumberPairAnalyzer
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            try
+            {
+                // Чтение чисел из файла
+                List<int> numbers = ReadNumbersFromFile(@"C:\Users\Artem\Desktop\20.txt");
+
+                // Константы для проверки условий
+                const int MinThreeDigitNumberDivisibleBy7 = 105; // Наименьшее 3-значное число, кратное 7
+                const int MinFourDigitNumber = 1000;             // Наименьшее 4-значное число
+                const int LastDigitThreshold = MinFourDigitNumber % 10; // Последняя цифра (0)
+
+                // Поиск подходящих пар
+                var (pairCount, maxPairSum) = FindValidPairs(numbers, MinThreeDigitNumberDivisibleBy7, LastDigitThreshold);
+
+                // Вывод результатов
+                Console.WriteLine($"Количество подходящих пар: {pairCount}");
+                Console.WriteLine($"Максимальная сумма элементов в парах: {maxPairSum}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Ошибка: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Читает числа из файла, пропуская некорректные строки.
+        /// </summary>
+        static List<int> ReadNumbersFromFile(string filePath)
+        {
+            List<int> numbers = new List<int>();
+            foreach (string line in File.ReadAllLines(filePath))
+            {
+                if (int.TryParse(line, out int number))
+                {
+                    numbers.Add(number);
+                }
+            }
+            return numbers;
+        }
+
+        /// <summary>
+        /// Находит пары чисел, удовлетворяющие условиям:
+        /// 1. Хотя бы одно число в паре меньше MinThreeDigitDivisibleBy7.
+        /// 2. Последняя цифра произведения чисел равна LastDigitThreshold.
+        /// </summary>
+        static (int Count, int MaxSum) FindValidPairs(List<int> numbers, int minThreeDigitDivisibleBy7, int lastDigitThreshold)
+        {
+            int validPairCount = 0;
+            int maxSum = int.MinValue;
+
+            for (int i = 0; i < numbers.Count - 1; i++)
+            {
+                int current = numbers[i];
+                int next = numbers[i + 1];
+
+                bool hasSmallNumber = current < minThreeDigitDivisibleBy7 || next < minThreeDigitDivisibleBy7;
+                bool productEndsWithThreshold = (current * next) % 10 == lastDigitThreshold;
+
+                if (hasSmallNumber && productEndsWithThreshold)
+                {
+                    validPairCount++;
+                    int currentSum = current + next;
+                    if (currentSum > maxSum)
+                    {
+                        maxSum = currentSum;
+                    }
+                }
+            }
+
+            return (validPairCount, maxSum);
+        }
+    }
+}
