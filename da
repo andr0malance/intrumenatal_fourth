@@ -11,7 +11,7 @@ namespace Пары
             try
             {
                 // Чтение чисел из файла
-                List<int> numbers = ReadNumbersFromFile(@"C:\Users\Artem\Desktop\20.txt");
+                List<int> numbers = ReadNumbersFromFile(@"C:\Users\user\Desktop\ooo.txt");
 
                 // Константы для проверки условий
                 const int MinThreeDigitNumberDivisibleBy7 = 105; // Наименьшее 3-значное число, кратное 7
